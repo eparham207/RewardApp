@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Reward Page</title>
+</head>
+<body>
+
+<div layout:fragment="content" class="container mt-4 mb-5">
+    <h2>Reward Result</h2>
+    <p>This table displays the final seat allocation for all rewarded fans.</p>
+
+    <div class="mb-3">
+        <label for="searchInput" class="form-label">Search Results:</label>
+        <input type="text" class="form-control" id="searchInput" placeholder="Type to filter results...">
+    </div>
+
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Preferred Stand</th>
+            <th>Assigned Seat</th>
+        </tr>
+        </thead>
+        <tbody id="rewardTableBody">
+        <tr th:if="${rewards.isEmpty()}">
+            <td colspan="6" class="text-center">No rewards have been processed yet.</td>
+        </tr>
+        <tr th:each="reward : ${rewards}">
+            <td th:text="${reward.fan.firstName}"></td>
+            <td th:text="${reward.fan.lastName}"></td>
+            <td th:text="${reward.fan.email}"></td>
+            <td th:text="${reward.fan.phone}"></td>
+            <td th:text="${reward.fan.preferredStand}"></td>
+            <td th:text="${reward.seat.seatNumber}"></td>
+        </tr>
+        </tbody>
+    </table>
+    
+    <a th:href="@{/preference}" class="btn btn-primary">Back to Preference Page</a>
+    
+</div> <th:block layout:fragment="scripts">
+    <script>
+        // Wait for the document to be ready
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get the search input and table body
+            const searchInput = document.getElementById("searchInput");
+            const tableBody = document.getElementById("rewardTableBody");
+            const rows = tableBody.getElementsByTagName("tr");
+
+            // Listen for 'keyup' event (as the user types)
+            searchInput.addEventListener("keyup", function() {
+                const filter = searchInput.value.toLowerCase(); // Get user input
+
+                // Loop through all table rows
+                for (let i = 0; i < rows.length; i++) {
+                    const row = rows[i];
+                    // Check if the row is the "empty" message
+                    if (row.getElementsByTagName("td").length === 1) {
+                        continue; 
+                    }
+
+                    const rowText = row.textContent.toLowerCase(); // Get all text from the row
+                    
+                    // If row text includes the filter text, show it. Otherwise, hide it.
+                    if (rowText.includes(filter)) {
+                        row.style.display = ""; // Show row
+                    } else {
+                        row.style.display = "none"; // Hide row
+                    }
+                }
+            });
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

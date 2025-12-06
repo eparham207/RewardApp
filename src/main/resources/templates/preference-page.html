@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Preference Page</title>
+</head>
+<body>
+<div layout:fragment="content" class="container mt-4 mb-5">
+    <h2>Preference Summary</h2>
+    <p>This table displays a summary of preferred seats for each stand.</p>
+    
+    <div th:if="${successMessage}" class="alert alert-success" role="alert" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
+
+    <table class="table table-striped table-bordered">
+        <thead>
+        <tr>
+            <th>Stand Name</th>
+            <th>Discount Price</th>
+            <th>Number of Preferred Seats</th>
+            <th>Number of Available Seats</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="summary : ${summaries}">
+            <td th:text="${summary.standName}"></td>
+            <td th:text="${#numbers.formatCurrency(summary.discountPrice)}"></td>
+            <td th:text="${summary.preferredSeats}"></td>
+            <td th:text="${summary.availableSeats}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <hr>
+
+    <h2>Preference Gathering</h2>
+
+    <div class="card mb-4">
+        <div class="card-header">Add a New Fan Preference</div>
+        <div class="card-body">
+            <form th:action="@{/preference/add}" th:object="${newFan}" method="post">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="firstName" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="lastName" th:field="*{lastName}" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="phone" class="form-label">Phone</label>
+                        <input type="tel" class="form-control" id="phone" th:field="*{phone}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="occupation" class="form-label">Occupation</label>
+                        <select class="form-select" id="occupation" th:field="*{occupation}" required>
+                            <option value="">Choose...</option>
+                            <option value="STU">Student</option>
+                            <option value="EDU">Educator</option>
+                            <option value="MLT">Military</option>
+                            <option value="OTH">Others</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="preferredStand" class="form-label">Preferred Stand</label>
+                        <select class="form-select" id="preferredStand" th:field="*{preferredStand}" required>
+                            <option value="">Choose...</option>
+                            <option value="North Stand">North Stand</option>
+                            <option value="South Stand">South Stand</option>
+                            <option value="East Stand">East Stand</option>
+                            <option value="West Stand">West Stand</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="card mb-4"> 
+        <div class="card-header">Import and Append from JSON File</div>
+        <div class="card-body">
+            <form th:action="@{/preference/import-append}" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="append-file" class="form-label">Select a .json file</label>
+                    <input class="form-control" type="file" id="append-file" name="file" accept=".json" required>
+                </div>
+                <button type="submit" class="btn btn-info">Import and Append</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">Import Preferences from JSON File (Replace All)</div>
+        <div class="card-body">
+            <form th:action="@{/preference/import}" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="file" class="form-label">Select a .json file</label>
+                    <input class="form-control" type="file" id="file" name="file" accept=".json" required>
+                </div>
+                <button type="submit" class="btn btn-success">Import (Replace All)</button>
+            </form>
+        </div>
+    </div>
+	<hr>
+	    <div class="card mb-4">
+	        <div class="card-header bg-danger text-white">Run Rewarding Process</div>
+	        <div class="card-body">
+	            <p><strong>Warning:</strong> Clicking this button will clear all previous rewards and run the complete rewarding process based on the current fan list.</p>
+	            <form th:action="@{/preference/reward}" method="post">
+	                <button type="submit" class="btn btn-danger btn-lg">Run Rewarding Process</button>
+	            </form>
+	        </div>
+	    </div>
+	    <hr>
+	   
+
+</div> </body>
+</html>
